@@ -6,6 +6,7 @@ import { generateVerificationToken } from "../utils/generateVerificationToken.js
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import {
   sendPasswordResetEmail,
+  sendResetSuccessfulEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../mailtrap/emails.js";
@@ -163,10 +164,58 @@ export const forgotPassword = async (req, res) => {
       `${process.env.CLIENT_URL}/reset-password/${resetToken}`
     );
     res.status(200).json({
-      message: "reset passwrod email sent successfully",
+      message: "reset password email sent successfully",
     });
   } catch (error) {
     console.log("error in reset password", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    console.log(token);
+    const { password } = req.body;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: Date.now() },
+    });
+    console.log({ user: user });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
+    }
+
+    // update passwword
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+
+    await user.save();
+
+    await sendResetSuccessfulEmail(user.email);
+
+    res.status(200).json("Password reset successful");
+  } catch (error) {
+    console.log("Error in resetPassword");
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log("error in checkAuth", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
