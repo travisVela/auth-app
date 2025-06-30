@@ -15,12 +15,12 @@ export const signup = async (req, res) => {
   try {
     const { email, password, confirmpassword, name } = req.body;
 
-    if (!email || !password || !name) {
+    if (!name || !email || !password || !confirmpassword) {
       res.status(400).json({ error: "All fields required" });
     }
 
     if (password != confirmpassword) {
-      res.status(400).json({ error: "passwords do not match" });
+      res.status(400).json({ error: "Passwords do not match" });
     }
 
     if (password.length < 6) {
@@ -90,7 +90,7 @@ export const verifyEmail = async (req, res) => {
 
     await sendWelcomeEmail(user.email, user.name);
     res.status(200).json({
-      message: "Password update sent successfully",
+      message: "Welcome email sent successfully",
       user: {
         ...user._doc,
         password: undefined,

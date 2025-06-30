@@ -20,10 +20,10 @@ export const sendVerificationEmail = async (email, verficationToken) => {
       category: "Email Verification",
     });
 
-    console.log("Email sent successfully", response);
+    console.log("Verification Email sent successfully", response);
   } catch (error) {
-    console.log("Error sending email", error);
-    res.status(400).json("Error sending verification", error);
+    console.log("Error sending verification email", error);
+    res.status(400).json("Error sending verification email", error);
   }
 };
 
