@@ -7,6 +7,7 @@ import EmailVerificationPage from "./pages/EmailVerificationPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import LoadingSpinner from "./component/LoadingSpinner";
 
 // redirect authenticated users to the homepage
 const RedirectAuthenticatedUser = ({ children }) => {
@@ -36,8 +37,8 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  console.log("isauthenticated", isAuthenticated);
-  console.log(user);
+
+  if (isCheckingAuth) return <LoadingSpinner />;
 
   return (
     <div
