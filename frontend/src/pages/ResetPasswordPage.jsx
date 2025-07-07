@@ -16,20 +16,21 @@ const ResetPasswordPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+    // if (password !== confirmPassword) {
+    //   toast.error("Passwords do not match");
+
+    //   return;
+    // }
 
     try {
-      await resetPassword(token, password);
+      await resetPassword(token, password, confirmPassword);
       toast.success("Password resest successfully");
       setTimeout(() => {
         navigate("/login");
       }, 2000);
     } catch (error) {
       console.log(error.response.data.message);
-      toast.error(error.response.data.message || "Error restting password");
+      //   toast.error(error.response.data.message || "Error restting password");
     }
   };
   return (
@@ -43,8 +44,10 @@ const ResetPasswordPage = () => {
         <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
           Reset Password
         </h2>
-        {/* {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        {message && <p className="text-green-500 text-sm mb-4">{message}</p>} */}
+        {error && (
+          <p className="text-red-500 font-semibold mb-2">{error.message}</p>
+        )}
+        {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
         <form onSubmit={handleSubmit}>
           <Input
             icon={Lock}

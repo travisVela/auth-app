@@ -177,19 +177,28 @@ export const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     console.log(token);
-    const { password } = req.body;
+    const { password, confirmPassword } = req.body;
+
     const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordExpiresAt: { $gt: Date.now() },
     });
     console.log({ user: user });
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match!!" });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired reset token" });
+        .json({ message: "Invalid or expired reset token!!" });
     }
 
-    // update passwword
+    // update password
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     user.password = hashedPassword;
