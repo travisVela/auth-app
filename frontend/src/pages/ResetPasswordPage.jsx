@@ -29,7 +29,7 @@ const ResetPasswordPage = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response.data.error);
       //   toast.error(error.response.data.message || "Error restting password");
     }
   };
@@ -45,7 +45,7 @@ const ResetPasswordPage = () => {
           Reset Password
         </h2>
         {error && (
-          <p className="text-red-500 font-semibold mb-2">{error.message}</p>
+          <p className="text-red-500 font-semibold mb-2">{error.error}</p>
         )}
         {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
         <form onSubmit={handleSubmit}>
